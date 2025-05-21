@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from "../assets/PCClogo.png"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo + Name */}
           <div className="flex items-center space-x-2">
-            <img src="/logo.svg" alt="ChurchNest" className="h-8 w-8" />
+            <img src={logo} alt="ChurchNest" className="h-8 w-8" />
             <span className="text-xl font-bold tracking-tight">ChurchNest</span>
           </div>
 
