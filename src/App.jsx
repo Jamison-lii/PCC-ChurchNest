@@ -7,6 +7,8 @@ import Documents from './Pages/Documents'
 import BrowseDocuments from './Pages/Documents'
 import Home from './Pages/Home'
 import Upload from './Pages/Upload'
+import AuthPage from './Pages/Auth'
+import Profile from './Pages/Pofile'
 
 function App() {
  
@@ -18,8 +20,12 @@ function App() {
         <Route path='/' element={<Home/>} />
       <Route path='/documents' element={<BrowseDocuments/>} />
       <Route path='/upload' element={<Upload/>}/>
+       <Route path='/login' element={<AuthPage/>}/>
+       <Route path='/profile' element={<Profile/>}/>
     </Routes>
-
+ 
+     
+      
      </BrowserRouter>
     </>
   )

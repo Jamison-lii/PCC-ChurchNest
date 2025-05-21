@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Input from "../Components/Input";
 import Card from "../Components/Card";
 import CardContent from "../Components/CardContent";
@@ -6,15 +6,14 @@ import CardContent from "../Components/CardContent";
 const categories = ["PECA", "CYF", "TECA", "RECA"];
 
 const documents = [
-  { id: 1, title: "Worship Song - March", category: "PECA", uploadedBy: "John Doe", date: "2025-05-18" },
+  { id: 1, title: "Worship Song - March", category: "PECA", composedBy: "John Wesley", uploadedBy: "John Doe", date: "2025-05-18" },
   { id: 2, title: "Youth Program Notes", category: "CYF", uploadedBy: "Sarah T.", date: "2025-05-16" },
-  { id: 3, title: "Choir Choral Sheet", category: "TECA", uploadedBy: "Choir Lead", date: "2025-05-14" },
+  { id: 3, title: "Choir Choral Sheet", category: "TECA", composedBy: "James Smith", uploadedBy: "Choir Lead", date: "2025-05-14" },
   { id: 4, title: "Financial Report", category: "RECA", uploadedBy: "Treasurer", date: "2025-05-10" },
   { id: 5, title: "Minutes of Meeting", category: "CYF", uploadedBy: "Alex", date: "2025-05-09" },
-  { id: 6, title: "Annual Theme Song", category: "PECA", uploadedBy: "David", date: "2025-05-08" },
+  { id: 6, title: "Annual Theme Song", category: "PECA", composedBy: "David Ayuba", uploadedBy: "David", date: "2025-05-08" },
   { id: 7, title: "Choir Practice Notes", category: "TECA", uploadedBy: "Choral Head", date: "2025-05-06" },
   { id: 8, title: "Budget Sheet", category: "RECA", uploadedBy: "Admin", date: "2025-05-05" },
-  // Add more documents as needed
 ];
 
 const ITEMS_PER_PAGE = 6;
@@ -24,15 +23,19 @@ export default function BrowseDocuments() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Filtered documents with search & category
   const filteredDocs = useMemo(() => {
-    const docs = documents.filter((doc) => {
+    const filtered = documents.filter((doc) => {
       const matchesSearch = doc.title.toLowerCase().includes(search.toLowerCase());
       const matchesCategory = selectedCategory ? doc.category === selectedCategory : true;
       return matchesSearch && matchesCategory;
     });
-    setCurrentPage(1); // Reset to page 1 when filters change
-    return docs;
+    return filtered;
   }, [search, selectedCategory]);
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset to page 1 when filter/search changes
+  }, [filteredDocs]);
 
   const totalPages = Math.ceil(filteredDocs.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -50,7 +53,7 @@ export default function BrowseDocuments() {
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-2xl font-bold text-[#800000] mb-4">Browse Documents</h1>
 
-      {/* Search + Filter */}
+      {/* Search and Category Filter */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <Input
           type="text"
@@ -84,8 +87,15 @@ export default function BrowseDocuments() {
               <CardContent>
                 <h2 className="font-semibold text-lg text-[#800000]">{doc.title}</h2>
                 <p className="text-sm text-gray-600">Category: {doc.category}</p>
-                <p className="text-sm text-gray-600">By: {doc.uploadedBy}</p>
+
+                {/* Only show composedBy if it's a song */}
+                {doc.composedBy && (
+                  <p className="text-sm text-gray-600">Composed by: {doc.composedBy}</p>
+                )}
+
+                <p className="text-sm text-gray-600">Uploaded by: {doc.uploadedBy}</p>
                 <p className="text-sm text-gray-400">{doc.date}</p>
+
                 <a
                   href={`/documents/${doc.id}`}
                   className="text-sm mt-2 inline-block text-[#FFD700] hover:underline"
@@ -96,7 +106,7 @@ export default function BrowseDocuments() {
             </Card>
           ))
         ) : (
-          <p className="text-gray-500">No documents found.</p>
+          <p className="text-gray-500 col-span-full">No documents found.</p>
         )}
       </div>
 
@@ -107,7 +117,9 @@ export default function BrowseDocuments() {
             onClick={handlePrev}
             disabled={currentPage === 1}
             className={`px-4 py-1 rounded-md ${
-              currentPage === 1 ? "bg-gray-200 text-gray-500" : "bg-[#800000] text-white"
+              currentPage === 1
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-[#800000] text-white"
             }`}
           >
             Previous
@@ -121,7 +133,9 @@ export default function BrowseDocuments() {
             onClick={handleNext}
             disabled={currentPage === totalPages}
             className={`px-4 py-1 rounded-md ${
-              currentPage === totalPages ? "bg-gray-200 text-gray-500" : "bg-[#800000] text-white"
+              currentPage === totalPages
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-[#800000] text-white"
             }`}
           >
             Next

@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "../assets/PCClogo.png"
+import logo from "../assets/PCClogo.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedUser && savedUser.email) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Documents", href: "/documents" },
     { name: "Upload", href: "/upload" },
+    ...(isLoggedIn ? [] : [{ name: "Login/SignUp", href: "/login" }]),
     { name: "Profile", href: "/profile" },
   ];
 
@@ -63,6 +72,8 @@ export default function Navbar() {
           ))}
         </div>
       )}
+
+      
     </nav>
   );
 }
